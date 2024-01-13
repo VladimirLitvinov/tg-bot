@@ -78,7 +78,9 @@ async def send_messages(iterator: AsyncResults, message: Message, response: dict
             button.row(InlineKeyboardButton(
                 text=f"Показать еще", callback_data='more_results')
             )
-            await message.answer(f'Доступно еще {count_results} результатов', reply_markup=button.as_markup())
+            await message.answer(f'Доступно еще {count_results} результатов,'
+                                 f'\n Для нового запроса введите: "/cancel"',
+                                 reply_markup=button.as_markup())
             await state.update_data(results=iterator, response=response, message=message)
             await state.set_state(UserStates.more_results)
             break

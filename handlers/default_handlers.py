@@ -114,13 +114,20 @@ async def get_request(message: Message, state: FSMContext):
             'adults': user_params['adults']
         }
     )
+    commands = [f"/{command} - {desc}" for command, desc in DEFAULT_COMMANDS]
     if response['error'] is True:
         text = response['message']
         await message.answer(f'Ошибка: {text}\nВведите новый запрос')
         await state.clear()
+        await message.answer('\n'.join(commands))
     else:
-        results = AsyncResults(response['results'], user_params['command'])
-        await send_messages(results, message, response, state)
+        if len(response['results']) == 0:
+            await message.answer('По вашему запросу ничего не найдено, введите новую команду')
+            await message.answer('\n'.join(commands))
+            await state.clear()
+        else:
+            results = AsyncResults(response['results'], user_params['command'])
+            await send_messages(results, message, response, state)
 
 
 @router.message(UserStates.request)

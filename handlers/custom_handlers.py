@@ -69,9 +69,10 @@ async def min_price(callback: CallbackQuery, state: FSMContext):
     await state.set_state(UserStates.max_price)
 
 
-@router.callback_query(UserStates.currency)
-async def currency_err(callback: CallbackQuery):
-    await callback.message.answer('Выберите валюту')
+@router.message(UserStates.currency, F.text)
+async def currency_err(message: Message):
+    await message.answer('Выберите валюту')
+
 
 
 @router.message(UserStates.max_price, F.text.regexp(r'(?<![-.])\b[0-9]+'))
