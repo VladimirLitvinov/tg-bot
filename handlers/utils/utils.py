@@ -23,7 +23,7 @@ class AsyncResults:
     def __aiter__(self):
         return self
 
-    async def __anext__(self, ):
+    async def __anext__(self) -> dict:
         if self.counter == len(self.list_result):
             raise StopAsyncIteration
         self.counter += 1
@@ -31,47 +31,64 @@ class AsyncResults:
 
 
 async def get_text(params_dict: dict) -> str:
+    """
+    Creating a text string for message
+    :param params_dict: Dictionary with user parameters
+    :return: Message text
+    """
     text = (f'Название: {params_dict["name"]}\n'
             f'Кровати: {params_dict["beds"]}\n'
             f'Адрес: {params_dict["address"]}\n'
             f'Цена: {params_dict["price"]["total"]} '
             f'{params_dict["price"]["currency"]}\n'
-            f'Рейтинг: {params_dict["rating"]}')
+            f'Рейтинг: {params_dict["rating"]}\n'
+            f'Ссылка на сайт: {params_dict["deeplink"]}')
 
     return text
 
 
-async def build_media_message(photos_dict: dict) -> MediaGroupBuilder:
-    message_builder = MediaGroupBuilder()
-    for link in photos_dict[:3]:
-        message_builder.add_photo(link)
-
-    return message_builder
-
-
-async def build_description_message(params_dict: dict):
+async def build_description_message(params_dict: dict) -> str:
     hotel_params = {
         'name': params_dict['name'],
         'beds': params_dict['beds'],
         'address': params_dict['address'],
         'price': params_dict['price'],
-        'rating': params_dict.get('rating', 0)
+        'rating': params_dict.get('rating', 0),
+        'deeplink': params_dict['deeplink']
     }
     text = await get_text(hotel_params)
-    button = InlineKeyboardBuilder()
-    button.row(InlineKeyboardButton(
-        text="Ссылка на сайт", url=params_dict['deeplink'])
-    )
-    return text, button
+
+    return text
 
 
-async def send_messages(iterator: AsyncResults, message: Message, response: dict, state: FSMContext):
+async def build_media_message(params_dict: dict) -> MediaGroupBuilder:
+    """
+    Build a media group message with user's parameters
+    :param params_dict: Dictionary with user parameters
+    :return: Media group
+    """
+    message_builder = MediaGroupBuilder()
+    for link in params_dict['images'][:3]:
+        message_builder.add_photo(link)
+    message_description = await build_description_message(params_dict)
+    message_builder.caption = message_description
+    return message_builder
+
+
+async def send_messages(iterator: AsyncResults, message: Message, response: dict, state: FSMContext) -> None:
+    """
+    Function for send 3 messages to user, after sending 3 messages the bot expects the next action
+    :param iterator: Iterator for response data
+    :param message: Message object
+    :param response: Response from server
+    :param state: User state
+    :return: None
+    """
     while True:
         one_result = await anext(iterator)
-        media_message = await build_media_message(one_result['images'])
-        description_message = await build_description_message(one_result)
+        media_message = await build_media_message(one_result)
+
         await message.answer_media_group(media=media_message.build())
-        await message.answer(description_message[0], reply_markup=description_message[1].as_markup())
         if iterator.counter % 3 == 0:
             count_results = len(response['results']) - iterator.counter + 1
             button = InlineKeyboardBuilder()

@@ -1,9 +1,14 @@
 import aiohttp
 
-from config_data.config import RAPID_API_KEY, RAPID_API_HOST
+from config_data.config import RAPID_API_KEY
 
 
 async def user_request(params: dict) -> dict:
+    """
+    Function to send request to airbnb
+    :param params: Dictionary of user parameters to send to airbnb
+    :return: Dictionary of response from airbnb
+    """
     url = "https://airbnb13.p.rapidapi.com/search-location"
     querystring = {
         "location": params['city'],
@@ -18,7 +23,6 @@ async def user_request(params: dict) -> dict:
     }
     headers = {
         "X-RapidAPI-Key": RAPID_API_KEY,
-        "X-RapidAPI-Host": RAPID_API_HOST
     }
 
     async with aiohttp.ClientSession() as session:

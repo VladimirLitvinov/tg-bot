@@ -2,6 +2,9 @@ from aiogram.fsm.state import StatesGroup, State
 
 
 class UserStates(StatesGroup):
+    """
+    Class for user states in bot
+    """
     choosing_city = State()
     enter_date = State()
     exit_date = State()
@@ -14,4 +17,3 @@ class UserStates(StatesGroup):
     pets = State()
     currency = State()
     max_price = State()
-
