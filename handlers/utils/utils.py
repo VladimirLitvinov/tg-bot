@@ -107,15 +107,23 @@ async def send_messages(iterator: AsyncResults, message: Message, response: dict
             await state.clear()
 
 
-async def build_history_text(history_list: list[History]) -> str:
+async def build_history_text(history_list: list[History]) -> tuple[str, dict]:
+    """
+    Function for building text for history
+    :param history_list: List of user history
+    :return: tuple of text and dictionary with user history
+    """
     splitter = '-' * 10
     history_text = ''
-    for history in history_list:
-        history_text += (f'Дата поиска: {history.date_search}\n'
+    history_dict = {}
+    for num, history in enumerate(history_list, start=1):
+        history_text += (f'Номер запроса: {num}\n'
+                         f'Дата поиска: {history.date_search}\n'
                          f'Город: {history.city}\n'
                          f'Дата въезда: {history.enter_date}\n'
                          f'Дата выезда: {history.exit_date}\n'
                          f'Взрослые: {history.adults}\n'
                          f'{splitter}\n')
+        history_dict[str(num)] = history
 
-    return history_text
+    return history_text, history_dict

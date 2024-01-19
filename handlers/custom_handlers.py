@@ -161,8 +161,10 @@ async def request(message: Message, state: FSMContext) -> None:
         'date_search': datetime.now(),
         'children': data['children'],
         'infants': data['infants'],
+        'max_price': data['max_price'],
         'pets': data['pets'],
-        'currency': data['currency']
+        'currency': data['currency'],
+        'command': data['command'],
     }
 
     await add_new_history(params)

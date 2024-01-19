@@ -30,3 +30,15 @@ async def get_history(user_tg_id: int) -> list[History]:
             .limit(10))
         result = history.scalars().all()
         return result
+
+
+async def get_history_by_id(history_id: int) -> History:
+    """
+    Get history by id
+    :param history_id: History id
+    :return: History object
+    """
+    async with async_session() as session:
+        history = await session.execute(select(History).filter(History.id == history_id))
+        result = history.scalars().all()
+        return result[0]

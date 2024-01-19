@@ -162,6 +162,7 @@ async def get_request(message: Message, state: FSMContext) -> None:
         'exit_date': datetime.strptime(user_params['exit_date'], '%Y-%m-%d'),
         'adults': user_params['adults'],
         'date_search': datetime.now(),
+        'command': user_params['command']
     }
     await add_new_history(params)
     response = await user_request(

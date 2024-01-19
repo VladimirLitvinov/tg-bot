@@ -6,6 +6,7 @@ class RequestFilter(Filter):
     """
     Filter for handling start request text
     """
+
     def __init__(self, text: str) -> None:
         self.text = text
 

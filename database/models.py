@@ -20,3 +20,5 @@ class History(Base):
     infants = Column(Integer, nullable=True, default=None)
     pets = Column(Integer, nullable=True, default=None)
     currency = Column(String, nullable=True, default=None)
+    max_price = Column(Integer, nullable=True, default=None)
+    command = Column(String)

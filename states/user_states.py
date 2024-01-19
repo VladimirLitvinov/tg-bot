@@ -17,3 +17,4 @@ class UserStates(StatesGroup):
     pets = State()
     currency = State()
     max_price = State()
+    history = State()
